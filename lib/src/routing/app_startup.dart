@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:starter_architecture_flutter_firebase/src/constants/app_sizes.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/onboarding/data/onboarding_repository.dart';
+import 'package:dailyhistor/src/constants/app_sizes.dart';
+import 'package:dailyhistor/src/features/onboarding/data/onboarding_repository.dart';
 
 part 'app_startup.g.dart';
 

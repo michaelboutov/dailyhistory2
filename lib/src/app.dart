@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:starter_architecture_flutter_firebase/src/routing/app_router.dart';
-import 'package:starter_architecture_flutter_firebase/src/routing/app_startup.dart';
+import 'package:dailyhistor/src/routing/app_router.dart';
+import 'package:dailyhistor/src/routing/app_startup.dart';
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
-
-  static const primaryColor = Colors.indigo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,34 +16,48 @@ class MyApp extends ConsumerWidget {
           onLoaded: (_) => child!,
         );
       },
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorSchemeSeed: primaryColor,
-        unselectedWidgetColor: Colors.grey,
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF4A90E2), // Soft blue as primary
+          secondary: const Color(0xFFF5A623), // Muted orange as secondary
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF5F5F5), // Light gray background
         appBarTheme: const AppBarTheme(
-          backgroundColor: primaryColor,
+          backgroundColor: Color(0xFF4A90E2),
           foregroundColor: Colors.white,
-          elevation: 2.0,
+          elevation: 0,
           centerTitle: true,
         ),
-        scaffoldBackgroundColor: Colors.grey[200],
-        dividerColor: Colors.grey[400],
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor,
-            foregroundColor: Colors.white,
+        cardTheme: CardTheme(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            backgroundColor: primaryColor,
-            foregroundColor: Colors.white,
+        textTheme: const TextTheme(
+          headlineMedium: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF2C3E50), // Dark gray for headlines
           ),
-        ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: primaryColor,
+          titleMedium: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF34495E), // Slightly lighter gray for titles
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 16,
+            height: 1.6,
+            color: Color(0xFF2C3E50), // Dark gray for body text
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 14,
+            color: Color(0xFF34495E), // Slightly lighter gray for secondary text
+          ),
         ),
       ),
-      debugShowCheckedModeBanner: false,
     );
   }
 }

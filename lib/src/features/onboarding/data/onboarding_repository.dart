@@ -1,7 +1,7 @@
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:starter_architecture_flutter_firebase/src/utils/shared_preferences_provider.dart';
+import 'package:dailyhistor/src/utils/shared_preferences_provider.dart';
 
 part 'onboarding_repository.g.dart';
 

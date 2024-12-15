@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/authentication/data/firebase_auth_repository.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/authentication/presentation/custom_profile_screen.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/authentication/presentation/custom_sign_in_screen.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/entries/presentation/entries_screen.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/entries/domain/entry.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/jobs/domain/job.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/entries/presentation/entry_screen/entry_screen.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/jobs/presentation/job_entries_screen/job_entries_screen.dart';
+import 'package:dailyhistor/src/features/authentication/data/firebase_auth_repository.dart';
+import 'package:dailyhistor/src/features/authentication/presentation/custom_profile_screen.dart';
+import 'package:dailyhistor/src/features/authentication/presentation/custom_sign_in_screen.dart';
+import 'package:dailyhistor/src/features/articles/presentation/article_screen.dart';
+import 'package:dailyhistor/src/features/articles/presentation/liked_articles_screen.dart';
+import 'package:dailyhistor/src/features/articles/presentation/scaffold_with_bottom_nav.dart';
 import 'package:go_router/go_router.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/jobs/presentation/edit_job_screen/edit_job_screen.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/jobs/presentation/jobs_screen/jobs_screen.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/onboarding/data/onboarding_repository.dart';
-import 'package:starter_architecture_flutter_firebase/src/features/onboarding/presentation/onboarding_screen.dart';
-import 'package:starter_architecture_flutter_firebase/src/routing/go_router_refresh_stream.dart';
-import 'package:starter_architecture_flutter_firebase/src/routing/not_found_screen.dart';
-import 'package:starter_architecture_flutter_firebase/src/routing/scaffold_with_nested_navigation.dart';
+import 'package:dailyhistor/src/features/onboarding/data/onboarding_repository.dart';
+import 'package:dailyhistor/src/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:dailyhistor/src/routing/go_router_refresh_stream.dart';
+import 'package:dailyhistor/src/routing/not_found_screen.dart';
+
+import '../features/entries/domain/entry.dart';
+import '../features/entries/presentation/entries_screen.dart';
+import '../features/entries/presentation/entry_screen/entry_screen.dart';
+import '../features/jobs/domain/job.dart';
+import '../features/jobs/presentation/edit_job_screen/edit_job_screen.dart';
+import '../features/jobs/presentation/job_entries_screen/job_entries_screen.dart';
+import '../features/jobs/presentation/jobs_screen/jobs_screen.dart';
 
 part 'app_router.g.dart';
 
 // private navigators
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _jobsNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'jobs');
 final _entriesNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'entries');
 final _accountNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'account');
@@ -29,6 +33,8 @@ final _accountNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'account');
 enum AppRoute {
   onboarding,
   signIn,
+  article,
+  liked,
   jobs,
   job,
   addJob,
@@ -40,7 +46,7 @@ enum AppRoute {
   profile,
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 GoRouter goRouter(Ref ref) {
   final authRepository = ref.watch(authRepositoryProvider);
   return GoRouter(
@@ -63,13 +69,15 @@ GoRouter goRouter(Ref ref) {
       final isLoggedIn = authRepository.currentUser != null;
       if (isLoggedIn) {
         if (path.startsWith('/onboarding') || path.startsWith('/signIn')) {
-          return '/jobs';
+          return '/';
         }
       } else {
         if (path.startsWith('/onboarding') ||
+            path == '/' ||
+            path.startsWith('/liked') ||
+            path.startsWith('/account') ||
             path.startsWith('/jobs') ||
-            path.startsWith('/entries') ||
-            path.startsWith('/account')) {
+            path.startsWith('/entries')) {
           return '/signIn';
         }
       }
@@ -91,13 +99,35 @@ GoRouter goRouter(Ref ref) {
           child: CustomSignInScreen(),
         ),
       ),
-      // Stateful navigation based on:
-      // https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_shell_route.dart
       StatefulShellRoute.indexedStack(
-        pageBuilder: (context, state, navigationShell) => NoTransitionPage(
-          child: ScaffoldWithNestedNavigation(navigationShell: navigationShell),
+        builder: (context, state, navigationShell) => ScaffoldWithBottomNav(
+          currentIndex: navigationShell.currentIndex,
+          child: navigationShell,
         ),
         branches: [
+          StatefulShellBranch(
+            navigatorKey: _shellNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/',
+                name: AppRoute.article.name,
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: ArticleScreen(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/liked',
+                name: AppRoute.liked.name,
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: LikedArticlesScreen(),
+                ),
+              ),
+            ],
+          ),
           StatefulShellBranch(
             navigatorKey: _jobsNavigatorKey,
             routes: [

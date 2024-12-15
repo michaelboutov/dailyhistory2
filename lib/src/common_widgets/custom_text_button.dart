@@ -1,6 +1,5 @@
+import 'package:dailyhistor/src/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:starter_architecture_flutter_firebase/src/constants/app_sizes.dart';
-
 /// Custom text button with a fixed height
 class CustomTextButton extends StatelessWidget {
   const CustomTextButton(
